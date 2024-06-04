@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   let userObject = {
     account: "",
     password: "",
@@ -78,6 +78,7 @@ export default function LoginScreen() {
       return false;
     } else {
       Alert.alert("Login success");
+      navigation.navigate("Index");
     }
   }
 }
