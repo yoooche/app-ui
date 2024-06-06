@@ -9,9 +9,11 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "/Users/louisyang/Desktop/zillomis-workspace/app-ui/context/AuthState";
 
 export default function LoginScreen({ navigation }) {
+  const { onAuthentication } = useContext(AuthContext);
   let userObject = {
     account: "",
     password: "",
@@ -19,6 +21,19 @@ export default function LoginScreen({ navigation }) {
   };
 
   const [loginInfo, setLoginInfo] = useState(userObject);
+
+  function onLogin() {
+    if (loginInfo.account === "" || loginInfo.password === "") {
+      Alert.alert("Please enter email and password");
+      return false;
+    } else {
+      loginInfo.password = "";
+      onAuthentication(loginInfo).then(() => {
+        Alert.alert("訊息", "登入成功!");
+        navigation.navigate("Index");
+      });
+    }
+  }
 
   return (
     <ScrollView className="flex-1" style={styles.container}>
@@ -71,16 +86,6 @@ export default function LoginScreen({ navigation }) {
       </View>
     </ScrollView>
   );
-
-  function onLogin() {
-    if (loginInfo.account === "" || loginInfo.password === "") {
-      Alert.alert("Please enter email and password");
-      return false;
-    } else {
-      Alert.alert("Login success");
-      navigation.navigate("Index");
-    }
-  }
 }
 
 const styles = StyleSheet.create({
