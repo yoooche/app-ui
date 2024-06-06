@@ -7,9 +7,34 @@ import {
   Switch,
   Image,
   ScrollView,
+  Alert,
 } from "react-native";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "/Users/louisyang/Desktop/zillomis-workspace/app-ui/context/AuthState";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
+  const { onAuthentication } = useContext(AuthContext);
+  let userObject = {
+    account: "",
+    password: "",
+    rememberMe: false,
+  };
+
+  const [loginInfo, setLoginInfo] = useState(userObject);
+
+  function onLogin() {
+    if (loginInfo.account === "" || loginInfo.password === "") {
+      Alert.alert("Please enter email and password");
+      return false;
+    } else {
+      loginInfo.password = "";
+      onAuthentication(loginInfo).then(() => {
+        Alert.alert("訊息", "登入成功!");
+        navigation.navigate("Index");
+      });
+    }
+  }
+
   return (
     <ScrollView className="flex-1" style={styles.container}>
       <View className="items-center justify-top">
@@ -24,22 +49,38 @@ export default function LoginScreen() {
         </Text>
         <View className="my-3 w-10/12">
           <TextInput
+            value={loginInfo.account}
+            onChangeText={(text) =>
+              setLoginInfo({ ...loginInfo, account: text })
+            }
             placeholder={"email"}
             className="px-3 py-2 border border-blue-300 rounded-md bg-blue-50"
           />
         </View>
         <View className="my-3 w-10/12">
           <TextInput
+            value={loginInfo.password}
+            onChangeText={(text) =>
+              setLoginInfo({ ...loginInfo, password: text })
+            }
             placeholder={"password"}
             secureTextEntry={true}
             className="px-3 py-2 border border-blue-300 rounded-md bg-blue-50"
           />
         </View>
         <View className="flex-row my-5">
-          <Switch value={true} />
+          <Switch
+            value={loginInfo.rememberMe}
+            onValueChange={(value) => {
+              setLoginInfo({ ...loginInfo, rememberMe: value });
+            }}
+          />
           <Text className="pt-3 pl-5 text-white">remember me</Text>
         </View>
-        <TouchableOpacity className="bg-indigo-700 rounded-lg my-3">
+        <TouchableOpacity
+          className="bg-indigo-700 rounded-lg my-3"
+          onPress={onLogin}
+        >
           <Text className="text-white text-xl px-5 py-3">Login</Text>
         </TouchableOpacity>
       </View>
